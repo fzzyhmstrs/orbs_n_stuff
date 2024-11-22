@@ -13,6 +13,8 @@
 package me.fzzyhmstrs.orbs_n_stuff.config
 
 import me.fzzyhmstrs.fzzy_config.annotations.IgnoreVisibility
+import me.fzzyhmstrs.fzzy_config.api.ConfigApi
+import me.fzzyhmstrs.fzzy_config.config.Config
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat
 import me.fzzyhmstrs.orbs_n_stuff.ONS
@@ -25,6 +27,10 @@ import net.minecraft.server.network.ServerPlayerEntity
 @IgnoreVisibility
 class ONSConfig: Config(ONS.identity("config")) {
 
+    companion object {
+        val INSTANCE = ConfigApi.registerAndLoadConfig({ ONSConfig() })
+    }
+    
     private var hpDropChance = ValidatedFloat(0.1f, 1f)
     private var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     private var hpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
