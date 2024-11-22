@@ -33,8 +33,8 @@ class ONSConfig: Config(ONS.identity("config")) {
         fun init(){}
     }
 
-    private var orbOwnerTime = ValidatedInt(0, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
-    private var orbDespawnTime = ValidatedInt(6000, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
+    var orbOwnerTime = ValidatedInt(0, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
+    var orbDespawnTime = ValidatedInt(6000, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
 
     private var hpSettings = Hp()
     
