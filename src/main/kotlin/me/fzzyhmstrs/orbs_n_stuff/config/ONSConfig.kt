@@ -16,7 +16,7 @@ import me.fzzyhmstrs.fzzy_config.annotations.IgnoreVisibility
 import me.fzzyhmstrs.fzzy_config.api.ConfigApi
 import me.fzzyhmstrs.fzzy_config.config.Config
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat
+import me.fzzyhmstrs.fzzy_config.validation.number.*
 import me.fzzyhmstrs.orbs_n_stuff.ONS
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -33,49 +33,74 @@ class ONSConfig: Config(ONS.identity("config")) {
         fun init(){}
     }
 
-    private var orbOwnerTime = ValidatedInt(0, 72000)
-    private var orbDespawnTime = ValidatedInt(6000, 72000)
-    
-    private var hpDropChance = ValidatedFloat(0.1f, 1f)
-    private var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    private var hpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    
-    private var xpDropChance = ValidatedFloat(0.05f, 1f)
-    private var xpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    private var xpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    
-    private var statusDropChance = ValidatedFloat(0.075f, 1f)
-    private var statusAdvancements = ValidatedIdentifier(Identifier.of("minecraft", "story/enter_the_nether")).toSet()
-    private var statusBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    private var statusWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    private var orbOwnerTime = ValidatedInt(0, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
+    private var orbDespawnTime = ValidatedInt(6000, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
 
-    private var bossBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
-    private var bossWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    private var hpSettings = Hp()
+    
+    @IgnoreVisibility
+    private class Hp: ConfigSection() {
+        private var hpDropChance = ValidatedFloat(0.1f, 1f)
+        private var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+        private var hpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    }
+
+    private var xpSettings = Xp()
+    
+    @IgnoreVisibility
+    private class Xp: ConfigSection() {
+        private var xpDropChance = ValidatedFloat(0.05f, 1f)
+        private var xpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+        private var xpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    }
+
+    private var statusSettings = Status()
+    
+    @IgnoreVisibility
+    private class Status: ConfigSection() {
+        private var statusDropChance = ValidatedFloat(0.075f, 1f)
+        private var statusAdvancements = ValidatedIdentifier(Identifier.of("minecraft", "story/enter_the_nether")).toSet()
+        private var statusBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+        private var statusWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    }
+
+    private var bossSettings = Boss()
+
+    @IgnoreVisibility
+    private class Boss: ConfigSection() {
+        private var bossKillCount = ValidatedInt(1, Int.MAX_VALUE, 0, ValidatedNumber.WidgetType.TEXTBOX)
+        private var bossKillCountPerType = ValidatedIdentifierMap.Builder()
+                .keyHandler(ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE))
+                .valueHandler(ValidatedInt(1, Int.MAX_VALUE, 0, ValidatedNumber.WidgetType.TEXTBOX))
+                .build()
+        private var bossBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+        private var bossWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
+    }
 
     private var globalBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     private var globalWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     
     fun willDropHp(entity: Entity): Boolean {
-        if (ONS.random().nextFloat() > hpDropChance.get()) return false
+        if (ONS.random().nextFloat() > hpSettings.hpDropChance.get()) return false
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
-        if (hpBlacklist.contains(typeId)) return false
-        return entity is Monster || hpWhitelist.contains(typeId)
+        if (hpSettings.hpBlacklist.contains(typeId)) return false
+        return entity is Monster || hpSettings.hpWhitelist.contains(typeId)
     }
 
     fun willDropXp(entity: Entity): Boolean {
-        if (ONS.random().nextFloat() > xpDropChance.get()) return false
+        if (ONS.random().nextFloat() > xpSettings.xpDropChance.get()) return false
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
-        if (xpBlacklist.contains(typeId)) return false
-        return entity is Monster || xpWhitelist.contains(typeId)
+        if (xpSettings.xpBlacklist.contains(typeId)) return false
+        return entity is Monster || xpSettings.xpWhitelist.contains(typeId)
     }
 
     fun willDropStatus(entity: Entity, playerEntity: ServerPlayerEntity): Boolean {
-        if (ONS.random().nextFloat() > statusDropChance.get()) return false
-        if (statusAdvancements.any { advancement ->
+        if (ONS.random().nextFloat() > statusSettings.statusDropChance.get()) return false
+        if (statusSettings.statusAdvancements.any { advancement ->
             val adv = player.serverWorld.server.advancementLoader.get(advancement)
             if (adv == null) {
                 ONS.LOGGER.error("Advancement $advancement couldn't be found. Check contents of the Orbs 'n' Stuff 'statusAdvancements' config list")
@@ -87,8 +112,8 @@ class ONSConfig: Config(ONS.identity("config")) {
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
-        if (statusBlacklist.contains(typeId)) return false
-        return entity is Monster || statusWhitelist.contains(typeId)
+        if (statusSettings.statusBlacklist.contains(typeId)) return false
+        return entity is Monster || statusSettings.statusWhitelist.contains(typeId)
     }
 
     private val BOSS_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("c", "bosses"))
@@ -97,7 +122,11 @@ class ONSConfig: Config(ONS.identity("config")) {
         if (hasKilled(entity, playerEntity)) return false
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
-        if (bossBlacklist.contains(typeId)) return false
-        return entity.type.isIn(BOSS_TAG) || bossWhitelist.contains(typeId)
+        if (bossSettings.bossBlacklist.contains(typeId)) return false
+        return entity.type.isIn(BOSS_TAG) || bossSettings.bossWhitelist.contains(typeId)
+    }
+
+    private fun hasKilled(entity: Entity, playerEntity: ServerPlayerEntity): Boolean {
+        TODO()
     }
 }
