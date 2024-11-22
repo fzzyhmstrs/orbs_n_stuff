@@ -33,7 +33,7 @@ class ONSConfig: Config(ONS.identity("config")) {
         fun init(){}
     }
 
-    private var orbOwnerTime = ValidatedInt(200, 72000)
+    private var orbOwnerTime = ValidatedInt(0, 72000)
     private var orbDespawnTime = ValidatedInt(6000, 72000)
     
     private var hpDropChance = ValidatedFloat(0.1f, 1f)
