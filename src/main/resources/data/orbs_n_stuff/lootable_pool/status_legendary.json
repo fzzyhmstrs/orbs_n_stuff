@@ -1,0 +1,75 @@
+{
+  "rarity": "common",
+  "weight": 20,
+  "entry": {
+    "type": "lootable:random",
+    "children": [
+      {
+	"type": "lootables:multi",
+        "children": [
+	  {
+	    "type": "lootables:status",
+	    "id": "Minecraft:strength",
+	    "amplifier": 1,
+            "duration": 1200
+          },
+          {
+	    "type": "lootables:status",
+	    "id": "Minecraft:haste",
+	    "amplifier": 1,
+            "duration": 1200
+          }
+	]
+      },
+      {
+	"type": "lootables:multi",
+        "children": [
+	  {
+	    "type": "lootables:status",
+	    "id": "Minecraft:regen",
+	    "amplifier": 1,
+            "duration": 1200
+          },
+          {
+	    "type": "lootables:status",
+	    "id": "Minecraft:speed",
+	    "amplifier": 1,
+            "duration": 1200
+          }
+	]
+      },
+      {
+	"type": "lootables:multi",
+        "children": [
+	  {
+	    "type": "lootables:status",
+	    "id": "Minecraft:fire_resistance",
+            "duration": 2400
+          },
+          {
+	    "type": "lootables:status",
+	    "id": "Minecraft:absorption",
+	    "amplifier": 1,
+            "duration": 1200
+          }
+	]
+      },
+      {
+	"type": "lootables:multi",
+        "children": [
+	  {
+	    "type": "lootables:status",
+	    "id": "Minecraft:health_boost",
+	    "amplifier": 1,
+            "duration": 2400
+          },
+          {
+	    "type": "lootables:status",
+	    "id": "Minecraft:resistance",
+            "duration": 600
+          }
+	]
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "Orbs 'n' Stuff",
+  "description": "Adds Diablo-esque 'health drops' that heal the player on pickup, as well as other type of orbs that provide other bonuses.",
+  "authors": [
+    "fzzyhmstrs"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/orbs-n-stuff",
+    "issues": "https://github.com/fzzyhmstrs/orbs_n_stuff/issues",
+    "sources": "https://github.com/fzzyhmstrs/orbs_n_stuff"
+  },
+  "license": "TDL-M",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "me.fzzyhmstrs.orbs_n_stuff.ONS"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "me.fzzyhmstrs.orbs_n_stuff.ONSClient"
+      }
+    ]
+  },
+  "mixins": [
+    "orbs_n_stuff.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loaderVersion}",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=${fabricKotlinVersion}",
+    "minecraft": "~1.21",
+    "java": ">=21"
+  }
+}

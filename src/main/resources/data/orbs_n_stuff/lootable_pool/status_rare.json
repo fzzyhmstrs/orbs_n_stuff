@@ -1,0 +1,45 @@
+{
+  "rarity": "common",
+  "weight": 20,
+  "entry": {
+    "type": "lootable:random",
+    "children": [
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:strength",
+	"amplifier": 0,
+        "duration": 600
+      },
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:haste",
+	"amplifier": 0,
+        "duration": 500
+      },
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:regeneration",
+	"amplifier": 1,
+        "duration": 600
+      },
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:speed",
+	"amplifier": 1,
+        "duration": 400
+      },
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:fire_resistance",
+	"amplifier": 0,
+        "duration": 1200
+      },
+      {
+	"type": "lootables:status",
+	"id": "Minecraft:saturation",
+	"amplifier": 0,
+        "duration": 1200
+      }
+    ]
+  }
+}

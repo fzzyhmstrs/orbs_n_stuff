@@ -1,0 +1,39 @@
+{
+  "pools": [
+    {
+      "id": "orbs_n_stuff:xp/common",
+      "rarity": "common",
+      "weight": 15,
+      "entry": {
+	"type": "lootables:xp",
+	"xp": {
+	  "min": 5,
+	  "max": 10
+	},
+	"levels": false
+      }
+    },
+    {
+      "id": "orbs_n_stuff:xp/uncommon",
+      "rarity": "uncommon",
+      "weight": 9,
+      "entry": {
+	"type": "lootables:xp",
+	"xp": {
+	  "min": 10,
+	  "max": 20
+	},
+	"levels": false
+      }
+    },
+    {
+      "id": "orbs_n_stuff:xp/legendary",
+      "rarity": "legendary",
+      "entry": {
+	"type": "lootables:xp",
+	"xp": 50,
+	"levels": false
+      }
+    }
+  ]
+}

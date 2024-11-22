@@ -1,0 +1,7 @@
+{
+  "pools": [
+    "orbs_n_stuff:status_common",
+    "orbs_n_stuff:status_rare",
+    "orbs_n_stuff:status_legendary"
+  ]
+}
