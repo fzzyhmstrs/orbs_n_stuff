@@ -29,6 +29,8 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     companion object {
         val INSTANCE = ConfigApi.registerAndLoadConfig({ ONSConfig() })
+
+        fun init(){}
     }
 
     private var orbOwnerTime = ValidatedInt(200, 72000)
