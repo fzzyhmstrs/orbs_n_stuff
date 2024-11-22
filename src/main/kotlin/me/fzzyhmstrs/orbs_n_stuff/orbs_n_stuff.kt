@@ -2,6 +2,8 @@
 
 package me.fzzyhmstrs.orbs_n_stuff
 
+import me.fzzyhmstrs.orbs_n_stuff.config.ONSConfig
+import me.fzzyhmstrs.orbs_n_stuff.event.ONSEvents
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -19,6 +21,8 @@ object ONS: ModInitializer {
 
 
     override fun onInitialize() {
+        ONSConfig.init()
+        ONSEvents.init()
     }
 
     fun random(): Random {
