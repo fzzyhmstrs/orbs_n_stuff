@@ -30,6 +30,9 @@ class ONSConfig: Config(ONS.identity("config")) {
     companion object {
         val INSTANCE = ConfigApi.registerAndLoadConfig({ ONSConfig() })
     }
+
+    private var orbOwnerTime = ValidatedInt(200, 72000)
+    private var orbDespawnTime = ValidatedInt(6000, 72000)
     
     private var hpDropChance = ValidatedFloat(0.1f, 1f)
     private var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
