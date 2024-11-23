@@ -11,6 +11,8 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.api.ModInitializer
+import net.minecraft.client.MinecraftClient
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.random.Random
 import org.slf4j.Logger
@@ -39,7 +41,6 @@ object ONS: ModInitializer {
     }
 }
 
-@Environment(value = EnvType.CLIENT)
 object ONSClient: ClientModInitializer {
 
     override fun onInitializeClient() {
@@ -48,5 +49,9 @@ object ONSClient: ClientModInitializer {
 
     fun random(): Random {
         return Random.createLocal()
+    }
+
+    fun getPlayer(): PlayerEntity? {
+        return MinecraftClient.getInstance().player
     }
 }

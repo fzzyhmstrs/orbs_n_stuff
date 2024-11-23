@@ -96,13 +96,18 @@ class ONSConfig: Config(ONS.identity("config")) {
     var clientSettings = Client()
 
     class Client: ConfigSection() {
+        @NonSync
         var showOrbSeams = ValidatedBoolean(true)
             .toCondition({ beamDistance.get() > 0.0 }, FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.condition1"), { false })
             .withCondition({particleCount.get() > 0}, FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.condition2"))
             .withFailTitle(FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.fail"))
+        @NonSync
         var beamHeight = ValidatedDouble(0.8, 2.0, 0.0)
+        @NonSync
         var beamOffset = ValidatedDouble(0.1, 0.25, 0.0)
-        var beamDistance = ValidatedDouble(48.0, 128.0, 0.0)
+        @NonSync
+        var beamDistance = ValidatedFloat(48f, 128f, 0f)
+        @NonSync
         var particleCount = ValidatedInt(1, 5, 0)
     }
 

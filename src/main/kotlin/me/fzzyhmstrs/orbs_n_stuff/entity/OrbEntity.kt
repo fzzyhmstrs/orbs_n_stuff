@@ -12,15 +12,21 @@
 
 package me.fzzyhmstrs.orbs_n_stuff.entity
 
+import me.fzzyhmstrs.orbs_n_stuff.ONSClient
 import me.fzzyhmstrs.orbs_n_stuff.config.ONSConfig
 import me.fzzyhmstrs.orbs_n_stuff.entity.variant.OrbVariant
+import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.*
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.particle.DustParticleEffect
 import net.minecraft.registry.tag.FluidTags
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.math.ColorHelper
 import net.minecraft.world.World
+import org.joml.Vector3f
+import java.awt.Color
 import kotlin.math.min
 
 class OrbEntity(type: EntityType<out OrbEntity>, world: World, val variant: OrbVariant) : Entity(type, world), Ownable {
@@ -105,7 +111,7 @@ class OrbEntity(type: EntityType<out OrbEntity>, world: World, val variant: OrbV
         }
 
         if (this.world.isClient) {
-
+            orbBeam()
         }
     }
 
@@ -123,6 +129,29 @@ class OrbEntity(type: EntityType<out OrbEntity>, world: World, val variant: OrbV
         this.count += other.count
         this.orbAge = min(this.orbAge, other.orbAge)
         other.discard()
+    }
+
+    private fun orbBeam() {
+        if (!ONSConfig.INSTANCE.clientSettings.showOrbSeams.get()) return
+        val player = ONSClient.getPlayer()
+        if (player == null || player.distanceTo(this) > ONSConfig.INSTANCE.clientSettings.beamDistance.get()) return
+        val color = Color(variant.color.get())
+        val colors = color.getColorComponents(null)
+        for (i in 1..ONSConfig.INSTANCE.clientSettings.particleCount.get()) {
+            world.addParticle(
+                DustParticleEffect(
+                    Vector3f(colors),
+                    1f
+                ),
+                true,
+                this.x + ((random.nextDouble() - 0.5) * 0.075),
+                this.y + ONSConfig.INSTANCE.clientSettings.beamOffset.get() + (random.nextDouble() * ONSConfig.INSTANCE.clientSettings.beamHeight.get()),
+                this.z + ((random.nextDouble() - 0.5) * 0.075),
+                0.0,
+                0.0,
+                0.0
+            )
+        }
     }
 
     override fun onPlayerCollision(player: PlayerEntity) {
