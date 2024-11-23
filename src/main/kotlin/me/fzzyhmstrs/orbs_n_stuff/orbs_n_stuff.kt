@@ -4,6 +4,9 @@ package me.fzzyhmstrs.orbs_n_stuff
 
 import me.fzzyhmstrs.orbs_n_stuff.config.ONSConfig
 import me.fzzyhmstrs.orbs_n_stuff.event.ONSEvents
+import me.fzzyhmstrs.orbs_n_stuff.registry.EntityRegistry
+import me.fzzyhmstrs.orbs_n_stuff.registry.EntityRendererRegistry
+import me.fzzyhmstrs.orbs_n_stuff.registry.ItemRegistry
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -23,6 +26,8 @@ object ONS: ModInitializer {
     override fun onInitialize() {
         ONSConfig.init()
         ONSEvents.init()
+        ItemRegistry.init()
+        EntityRegistry.init()
     }
 
     fun random(): Random {
@@ -38,6 +43,7 @@ object ONS: ModInitializer {
 object ONSClient: ClientModInitializer {
 
     override fun onInitializeClient() {
+        EntityRendererRegistry.init()
     }
 
     fun random(): Random {

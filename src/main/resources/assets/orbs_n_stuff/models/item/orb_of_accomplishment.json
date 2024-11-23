@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "orbs_n_stuff:item/orb_of_accomplishment"
+  }
+}

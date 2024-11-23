@@ -1,3 +1,28 @@
 {
-	"item.template_kotlin.item_id": "Item Name"
+	"orbs_n_stuff.config.orbOwnerTime": "Orb Ownership Time",
+	"orbs_n_stuff.config.orbOwnerTime.desc": "How long in ticks a dropped orb can only be picked up by the direct killer of the entity that dropped it.",
+	"orbs_n_stuff.config.orbDespawnTime": "Orb Despawn Time",
+	"orbs_n_stuff.config.orbDespawnTime.desc": "How long in ticks until an orb despawns. Default is the same as an item.\n\nSet to -1 to disable despawning (not recommended on a server).",
+	"orbs_n_stuff.config.hpSettings": "HP Orbs",
+	"orbs_n_stuff.config.hpSettings.desc": "HP Orbs",
+
+	"orbs_n_stuff.config.clientSettings.showOrbBeams": "Render Orb Beams",
+	"orbs_n_stuff.config.clientSettings.showOrbBeams.condition1": "Beam render distance must be greater than 0",
+	"orbs_n_stuff.config.clientSettings.showOrbBeams.condition2": "Particle count must be greater than 0",
+	"orbs_n_stuff.config.clientSettings.showOrbBeams.fail": "Disabled",
+	"orbs_n_stuff.config.clientSettings.beamHeight": "Orb Beam Height",
+	"orbs_n_stuff.config.clientSettings.beamHeight.desc": "Height in blocks of the particle beam",
+	"orbs_n_stuff.config.clientSettings.beamOffset": "Orb Beam Offset",
+	"orbs_n_stuff.config.clientSettings.beamOffset.desc": "Distance in blocks of the base of the particle beam from the bottom of the orb",
+	"orbs_n_stuff.config.clientSettings.beamDistance": "Orb Beam Render Distance",
+	"orbs_n_stuff.config.clientSettings.beamDistance.desc": "Distance in blocks that beams are rendered",
+	"orbs_n_stuff.config.clientSettings.particleCount": "Beam Particle Count",
+	"orbs_n_stuff.config.clientSettings.particleCount.desc": "How many loot beam particles to spawn per tick",
+
+	"item.orbs_n_stuff.orb_of_accomplishment": "Orb of Accomplishment",
+
+	"entity.orbs_n_stuff.hp": "HP Orb",
+	"entity.orbs_n_stuff.xp": "XP Orb",
+	"entity.orbs_n_stuff.status": "Status Effect Orb",
+	"entity.orbs_n_stuff.boss": "Orb of Accomplishment"
 }
