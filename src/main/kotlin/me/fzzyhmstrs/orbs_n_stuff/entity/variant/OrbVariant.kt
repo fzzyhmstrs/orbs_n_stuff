@@ -15,7 +15,6 @@ package me.fzzyhmstrs.orbs_n_stuff.entity.variant
 import me.fzzyhmstrs.lootables.api.LootableItem
 import me.fzzyhmstrs.lootables.api.LootablesApi
 import me.fzzyhmstrs.orbs_n_stuff.ONS
-import me.fzzyhmstrs.orbs_n_stuff.entity.OrbEntity
 import me.fzzyhmstrs.orbs_n_stuff.registry.ItemRegistry
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.registry.Registries
@@ -96,7 +95,6 @@ class OrbVariant private constructor(val data: LootableItem.LootableData, val co
     fun supplyLoot(playerEntity: ServerPlayerEntity, pos: Vec3d): Boolean {
         val bl = if (data.eventType == LootableItem.LootableData.EventType.PICKUP) {
             if (data.rollType == LootableItem.LootableData.RollType.RANDOM) {
-                DyeColor.RED
                 LootablesApi.supplyLootRandomly(data.table, playerEntity, pos, data.key, data.rolls)
             } else {
                 LootablesApi.supplyLootWithChoices(data.table, playerEntity, pos, { _, _ -> }, { p, _ -> }, data.key, data.rolls)

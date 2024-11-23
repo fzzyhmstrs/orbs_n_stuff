@@ -3,15 +3,15 @@
 package me.fzzyhmstrs.orbs_n_stuff
 
 import me.fzzyhmstrs.orbs_n_stuff.config.ONSConfig
+import me.fzzyhmstrs.orbs_n_stuff.config.ONSDebugConfig
 import me.fzzyhmstrs.orbs_n_stuff.event.ONSEvents
 import me.fzzyhmstrs.orbs_n_stuff.registry.EntityRegistry
 import me.fzzyhmstrs.orbs_n_stuff.registry.EntityRendererRegistry
 import me.fzzyhmstrs.orbs_n_stuff.registry.ItemRegistry
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.fabricmc.api.ModInitializer
 import net.minecraft.client.MinecraftClient
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.random.Random
@@ -30,6 +30,8 @@ object ONS: ModInitializer {
         ONSEvents.init()
         ItemRegistry.init()
         EntityRegistry.init()
+
+        ONSDebugConfig.init()
     }
 
     fun random(): Random {
@@ -51,7 +53,7 @@ object ONSClient: ClientModInitializer {
         return Random.createLocal()
     }
 
-    fun getPlayer(): PlayerEntity? {
-        return MinecraftClient.getInstance().player
+    fun getCamera(): Entity? {
+        return MinecraftClient.getInstance().getCameraEntity()
     }
 }

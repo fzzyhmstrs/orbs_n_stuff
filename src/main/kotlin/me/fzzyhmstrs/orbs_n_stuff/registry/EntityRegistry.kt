@@ -29,32 +29,28 @@ object EntityRegistry {
     }
 
     private val hpOrbRegister = register(EntityType.Builder.create({ t, w -> OrbEntity(t, w, OrbVariant.HP) }, SpawnGroup.MISC)
-        .dimensions(0.25F, 0.25F)
-        .eyeHeight(0.2125F)
+        .dimensions(0.3F, 0.3F)
         .maxTrackingRange(6)
         .trackingTickInterval(20), "hp")
 
     val HP_ORB: Supplier<EntityType<OrbEntity>> = Supplier { hpOrbRegister }
 
     private val xpOrbRegister = register(EntityType.Builder.create({ t, w -> OrbEntity(t, w, OrbVariant.XP) }, SpawnGroup.MISC)
-        .dimensions(0.25F, 0.25F)
-        .eyeHeight(0.2125F)
+        .dimensions(0.3F, 0.3F)
         .maxTrackingRange(6)
         .trackingTickInterval(20), "xp")
 
     val XP_ORB: Supplier<EntityType<OrbEntity>> = Supplier { xpOrbRegister }
 
     private val statusOrbRegister = register(EntityType.Builder.create({ t, w -> OrbEntity(t, w, OrbVariant.STATUS) }, SpawnGroup.MISC)
-        .dimensions(0.25F, 0.25F)
-        .eyeHeight(0.2125F)
+        .dimensions(0.3F, 0.3F)
         .maxTrackingRange(6)
         .trackingTickInterval(20), "status")
 
     val STATUS_ORB: Supplier<EntityType<OrbEntity>> = Supplier { statusOrbRegister }
 
     private val bossOrbRegister = register(EntityType.Builder.create({ t, w -> OrbEntity(t, w, OrbVariant.BOSS) }, SpawnGroup.MISC)
-        .dimensions(0.25F, 0.25F)
-        .eyeHeight(0.2125F)
+        .dimensions(0.3F, 0.3F)
         .maxTrackingRange(6)
         .trackingTickInterval(20), "boss")
 

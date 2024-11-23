@@ -2,43 +2,55 @@
   "rarity": "common",
   "weight": 20,
   "entry": {
-    "type": "lootable:random",
+    "type": "lootables:random",
     "children": [
       {
-	"type": "lootables:status",
-	"id": "Minecraft:strength",
-	"amplifier": 0,
-        "duration": 400
+        "type": "lootables:status",
+        "status": {
+          "id":"minecraft:strength",
+          "amplifier": 0,
+          "duration": 400
+        }
       },
       {
-	"type": "lootables:status",
-	"id": "Minecraft:haste",
-	"amplifier": 0,
-        "duration": 300
+        "type": "lootables:status",
+        "status": {
+          "id": "minecraft:haste",
+          "amplifier": 0,
+          "duration": 300
+        }
       },
       {
-	"type": "lootables:status",
-	"id": "Minecraft:regeneration",
-	"amplifier": 0,
-        "duration": 500
+        "type": "lootables:status",
+        "status": {
+          "id": "minecraft:regeneration",
+          "amplifier": 0,
+          "duration": 500
+        }
       },
       {
-	"type": "lootables:status",
-	"id": "Minecraft:speed",
-	"amplifier": 0,
-        "duration": 300
+        "type": "lootables:status",
+        "status": {
+          "id": "minecraft:speed",
+          "amplifier": 0,
+          "duration": 300
+        }
       },
       {
-	"type": "lootables:status",
-	"id": "Minecraft:fire_resistance",
-	"amplifier": 0,
-        "duration": 600
+        "type": "lootables:status",
+        "status": {
+          "id": "minecraft:fire_resistance",
+          "amplifier": 0,
+          "duration": 600
+        }
       },
       {
-	"type": "lootables:status",
-	"id": "Minecraft:saturation",
-	"amplifier": 0,
-        "duration": 100
+        "type": "lootables:status",
+        "status": {
+          "id": "minecraft:saturation",
+          "amplifier": 0,
+          "duration": 100
+        }
       }
     ]
   }

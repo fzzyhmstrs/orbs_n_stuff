@@ -21,7 +21,10 @@ import me.fzzyhmstrs.fzzy_config.util.FcText
 import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedIdentifierMap
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedBoolean
-import me.fzzyhmstrs.fzzy_config.validation.number.*
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedNumber
 import me.fzzyhmstrs.orbs_n_stuff.ONS
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -43,30 +46,29 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     var orbOwnerTime = ValidatedInt(0, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
     var orbDespawnTime = ValidatedInt(6000, 72000, -1, ValidatedNumber.WidgetType.TEXTBOX)
+    var orbSpawnVelocity = ValidatedDouble(0.065, 0.25, 0.0, ValidatedNumber.WidgetType.TEXTBOX)
+
 
     private var hpSettings = Hp()
 
-    @IgnoreVisibility
-    private class Hp: ConfigSection() {
-        var hpDropChance = ValidatedFloat(0.1f, 1f)
+    class Hp: ConfigSection() {
+        var hpDropChance = ValidatedFloat(0.1f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var hpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     }
 
     private var xpSettings = Xp()
 
-    @IgnoreVisibility
-    private class Xp: ConfigSection() {
-        var xpDropChance = ValidatedFloat(0.05f, 1f)
+    class Xp: ConfigSection() {
+        var xpDropChance = ValidatedFloat(0.05f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var xpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var xpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     }
 
     private var statusSettings = Status()
 
-    @IgnoreVisibility
-    private class Status: ConfigSection() {
-        var statusDropChance = ValidatedFloat(0.075f, 1f)
+    class Status: ConfigSection() {
+        var statusDropChance = ValidatedFloat(0.075f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var statusAdvancements = ValidatedIdentifier(Identifier.of("minecraft", "story/enter_the_nether")).toSet()
         var statusBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var statusWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
@@ -74,10 +76,9 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     private var bossSettings = Boss()
 
-    @IgnoreVisibility
     private class Boss: ConfigSection() {
-        private var bossKillCount = ValidatedInt(1, Int.MAX_VALUE, 0, ValidatedNumber.WidgetType.TEXTBOX)
-        private var bossKillCountPerType = ValidatedIdentifierMap.Builder<Int>()
+        var bossKillCount = ValidatedInt(1, Int.MAX_VALUE, 0, ValidatedNumber.WidgetType.TEXTBOX)
+        var bossKillCountPerType = ValidatedIdentifierMap.Builder<Int>()
                 .keyHandler(ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE))
                 .valueHandler(ValidatedInt(1, Int.MAX_VALUE, 0, ValidatedNumber.WidgetType.TEXTBOX))
                 .build()
@@ -97,16 +98,15 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     class Client: ConfigSection() {
         @NonSync
-        var showOrbSeams = ValidatedBoolean(true)
-            .toCondition({ beamDistance.get() > 0.0 }, FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.condition1"), { false })
-            .withCondition({particleCount.get() > 0}, FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.condition2"))
+        var showOrbBeams = ValidatedBoolean(true)
+            .toCondition({ particleCount.get() > 0 }, FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.condition1"), { false })
             .withFailTitle(FcText.translatable("orbs_n_stuff.config.clientSettings.showOrbBeams.fail"))
         @NonSync
         var beamHeight = ValidatedDouble(0.8, 2.0, 0.0)
         @NonSync
         var beamOffset = ValidatedDouble(0.1, 0.25, 0.0)
         @NonSync
-        var beamDistance = ValidatedFloat(48f, 128f, 0f)
+        var renderMultiplier = ValidatedFloat(1f, 8f, 0.5f)
         @NonSync
         var particleCount = ValidatedInt(1, 5, 0)
     }

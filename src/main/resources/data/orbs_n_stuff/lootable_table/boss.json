@@ -63,7 +63,7 @@
       "weight": 1,
       "entry": {
 	"type": "lootables:attribute",
-	"attribute": "minecraft:player.luck",
+	"attribute": "minecraft:generic.luck",
 	"value": 1.0,
 	"persistent": true
       }
