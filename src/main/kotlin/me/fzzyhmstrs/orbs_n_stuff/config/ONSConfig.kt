@@ -149,7 +149,7 @@ class ONSConfig: Config(ONS.identity("config")) {
         var chance = if (xpSettings.uniqueKillsChanceBoost.get()) {
             val stat = Stats.KILLED.getOrCreateStat(entity.type)
             val kills = playerEntity.statHandler.getStat(stat) - 1
-            val multi = 4f - (4 / (1 + exp(kills.toFloat())))
+            val multi = 4f - (4 / (1 + exp(-0.2f * kills.toFloat())))
             multi * (xpSettings.xpDropChance.get() + (looting * xpSettings.lootingChanceBoost.get()))
         } else {
             xpSettings.xpDropChance.get() + (looting * xpSettings.lootingChanceBoost.get())
