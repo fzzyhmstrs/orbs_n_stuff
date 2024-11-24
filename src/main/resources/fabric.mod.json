@@ -3,7 +3,7 @@
   "id": "${id}",
   "version": "${version}",
   "name": "Orbs 'n' Stuff",
-  "description": "Adds Diablo-esque 'health drops' that heal the player on pickup, as well as other type of orbs that provide other bonuses.",
+  "description": "Adds Diablo-style 'health drops' that heal the player on pickup, as well as other orbs that provide bonuses like XP and status effects.",
   "authors": [
     "fzzyhmstrs"
   ],
@@ -37,6 +37,7 @@
     "fabric": "*",
     "fabric-language-kotlin": ">=${fabricKotlinVersion}",
     "minecraft": "~1.21",
-    "java": ">=21"
+    "java": ">=21",
+    "fzzy_config": ">=0.5.8"
   }
 }

@@ -198,6 +198,6 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     private fun hasKilled(entity: Entity, playerEntity: ServerPlayerEntity): Boolean {
         val stat = Stats.KILLED.getOrCreateStat(entity.type)
-        return playerEntity.statHandler.getStat(stat) <= bossSettings.getBossKillCount(entity)
+        return playerEntity.statHandler.getStat(stat) > bossSettings.getBossKillCount(entity)
     }
 }

@@ -40,7 +40,7 @@ class OrbEntityRenderer(ctx: EntityRendererFactory.Context) : EntityRenderer<Orb
         matrixStack.multiply(FzzyRotation.POSITIVE_X.degrees(MathHelper.cos(k * 0.1f) * 180.0f))
         matrixStack.multiply(FzzyRotation.POSITIVE_Z.degrees(MathHelper.sin(k * 0.15f) * 360.0f))
         val color = orbEntity.variant.color.get()
-        matrixStack.scale(-0.7f, -0.7f, 0.7f)
+        matrixStack.scale(-0.66667f, -0.66667f, 0.66667f)
         val vertexConsumer = vertexConsumerProvider.getBuffer(model.getLayer(TEXTURE))
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, color)
         matrixStack.scale(1.2f, 1.2f, 1.2f)
