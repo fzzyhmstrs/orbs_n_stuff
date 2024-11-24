@@ -18,6 +18,7 @@ import me.fzzyhmstrs.fzzy_config.api.ConfigApi
 import me.fzzyhmstrs.fzzy_config.config.Config
 import me.fzzyhmstrs.fzzy_config.config.ConfigSection
 import me.fzzyhmstrs.fzzy_config.util.FcText
+import me.fzzyhmstrs.fzzy_config.util.FcText.translate
 import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedIdentifierMap
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedBoolean
@@ -28,12 +29,14 @@ import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedNumber
 import me.fzzyhmstrs.orbs_n_stuff.ONS
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.mob.Monster
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.stat.Stats
 import net.minecraft.util.Identifier
+import kotlin.math.exp
 
 @IgnoreVisibility
 class ONSConfig: Config(ONS.identity("config")) {
@@ -46,13 +49,18 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     var orbOwnerTime = ValidatedInt(0, 72000, 0, ValidatedNumber.WidgetType.TEXTBOX)
     var orbDespawnTime = ValidatedInt(6000, 72000, -1, ValidatedNumber.WidgetType.TEXTBOX)
-    var orbSpawnVelocity = ValidatedDouble(0.065, 0.25, 0.0, ValidatedNumber.WidgetType.TEXTBOX)
+    var orbSpawnVelocity = ValidatedDouble(0.15, 0.5, 0.0, ValidatedNumber.WidgetType.TEXTBOX)
 
 
     private var hpSettings = Hp()
 
     class Hp: ConfigSection() {
-        var hpDropChance = ValidatedFloat(0.1f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
+        var hpDropChance = ValidatedFloat(0.15f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
+        var lowHpChanceBoost = ValidatedBoolean(true)
+        var lowHpChanceFraction = ValidatedFloat(0.3f, 1f, 0f)
+            .toCondition(lowHpChanceBoost) { 0.3f }
+            .withFailTitle("orbs_n_stuff.config.hpSettings.lowHpChanceFraction.fail".translate())
+        var lootingChanceBoost = ValidatedFloat(0.025f, 0.25f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var hpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var hpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     }
@@ -61,6 +69,8 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     class Xp: ConfigSection() {
         var xpDropChance = ValidatedFloat(0.05f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
+        var uniqueKillsChanceBoost = ValidatedBoolean(true)
+        var lootingChanceBoost = ValidatedFloat(0.025f, 0.25f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var xpBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var xpWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     }
@@ -69,7 +79,12 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     class Status: ConfigSection() {
         var statusDropChance = ValidatedFloat(0.075f, 1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
-        var statusAdvancements = ValidatedIdentifier(Identifier.of("minecraft", "story/enter_the_nether")).toSet()
+        var statusAdvancements = ValidatedIdentifier().toSet(Identifier.of("minecraft", "story/enter_the_nether"))
+        var killedStatusCountBoost = ValidatedBoolean(true)
+        var perStatusBoostAmount = ValidatedFloat(0.025f, 0.1f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
+            .toCondition(killedStatusCountBoost) { 0f }
+            .withFailTitle("orbs_n_stuff.config.hpSettings.lowHpChanceFraction.fail".translate())
+        var lootingChanceBoost = ValidatedFloat(0.025f, 0.25f, 0f, ValidatedNumber.WidgetType.TEXTBOX)
         var statusBlacklist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
         var statusWhitelist = ValidatedIdentifier.ofRegistryKey(RegistryKeys.ENTITY_TYPE).toSet()
     }
@@ -111,8 +126,18 @@ class ONSConfig: Config(ONS.identity("config")) {
         var particleCount = ValidatedInt(1, 5, 0)
     }
 
-    fun willDropHp(entity: Entity): Boolean {
-        if (ONS.random().nextFloat() > hpSettings.hpDropChance.get()) return false
+    fun willDropHp(entity: Entity, playerEntity: ServerPlayerEntity, looting: Int): Boolean {
+        var chance = if (playerEntity.health <= 1f) {
+            (if(hpSettings.lowHpChanceBoost.get()) 4f else 1f) *
+                    (hpSettings.hpDropChance.get() + (looting * hpSettings.lootingChanceBoost.get()))
+        } else if (playerEntity.health / playerEntity.maxHealth <= hpSettings.lowHpChanceFraction.get()) {
+            (if(hpSettings.lowHpChanceBoost.get()) 2f else 1f) *
+                    (hpSettings.hpDropChance.get() + (looting * hpSettings.lootingChanceBoost.get()))
+        } else {
+            (hpSettings.hpDropChance.get() + (looting * hpSettings.lootingChanceBoost.get()))
+        }
+        chance = chance.coerceIn(0f, 1f)
+        if (ONS.random().nextFloat() > chance) return false
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
@@ -120,8 +145,17 @@ class ONSConfig: Config(ONS.identity("config")) {
         return entity is Monster || hpSettings.hpWhitelist.contains(typeId)
     }
 
-    fun willDropXp(entity: Entity): Boolean {
-        if (ONS.random().nextFloat() > xpSettings.xpDropChance.get()) return false
+    fun willDropXp(entity: Entity, playerEntity: ServerPlayerEntity, looting: Int): Boolean {
+        var chance = if (xpSettings.uniqueKillsChanceBoost.get()) {
+            val stat = Stats.KILLED.getOrCreateStat(entity.type)
+            val kills = playerEntity.statHandler.getStat(stat) - 1
+            val multi = 4f - (4 / (1 + exp(kills.toFloat())))
+            multi * (xpSettings.xpDropChance.get() + (looting * xpSettings.lootingChanceBoost.get()))
+        } else {
+            xpSettings.xpDropChance.get() + (looting * xpSettings.lootingChanceBoost.get())
+        }
+        chance = chance.coerceIn(0f, 1f)
+        if (ONS.random().nextFloat() > chance) return false
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false
         if (globalWhitelist.contains(typeId)) return true
@@ -129,8 +163,12 @@ class ONSConfig: Config(ONS.identity("config")) {
         return entity is Monster || xpSettings.xpWhitelist.contains(typeId)
     }
 
-    fun willDropStatus(entity: Entity, playerEntity: ServerPlayerEntity): Boolean {
-        if (ONS.random().nextFloat() > statusSettings.statusDropChance.get()) return false
+    fun willDropStatus(entity: Entity, playerEntity: ServerPlayerEntity, looting: Int): Boolean {
+        val statuses = (entity as? LivingEntity)?.statusEffects?.size ?: 0
+        val chance = statusSettings.statusDropChance.get() +
+                (statuses * statusSettings.perStatusBoostAmount.get()) +
+                (looting * statusSettings.lootingChanceBoost.get())
+        if (ONS.random().nextFloat() > chance) return false
         if (statusSettings.statusAdvancements.any { advancement ->
             val adv = playerEntity.serverWorld.server.advancementLoader.get(advancement)
             if (adv == null) {
@@ -149,7 +187,7 @@ class ONSConfig: Config(ONS.identity("config")) {
 
     private val bossTag = TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("c", "bosses"))
 
-    fun willDropBoss(entity: Entity, playerEntity: ServerPlayerEntity): Boolean {
+    fun willDropBoss(entity: Entity, playerEntity: ServerPlayerEntity, looting: Int): Boolean {
         if (hasKilled(entity, playerEntity)) return false
         val typeId = EntityType.getId(entity.type)
         if (globalBlacklist.contains(typeId)) return false

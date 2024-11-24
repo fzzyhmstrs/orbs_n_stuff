@@ -19,7 +19,12 @@ import me.fzzyhmstrs.orbs_n_stuff.entity.OrbEntity
 import me.fzzyhmstrs.orbs_n_stuff.entity.variant.OrbVariant
 import me.fzzyhmstrs.orbs_n_stuff.registry.EntityRegistry
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
+import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.enchantment.Enchantments
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 
 
 object ONSEvents {
@@ -27,45 +32,62 @@ object ONSEvents {
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, killer, killed ->
             if (killer !is ServerPlayerEntity) return@register
-            if (ONSConfig.INSTANCE.willDropHp(killed) || ONSDebugConfig.INSTANCE.guaranteeHpDrops.get()) {
+            val looting = killer.registryManager.getOptional(RegistryKeys.ENCHANTMENT).map { reg ->
+                reg.getEntry(Enchantments.LOOTING).map { enchant ->
+                    EnchantmentHelper.getEquipmentLevel(enchant, killer)
+                }.orElse(0)
+            }.orElse(0)
+            var bl = false
+            if (ONSConfig.INSTANCE.willDropHp(killed, killer, looting) || ONSDebugConfig.INSTANCE.guaranteeHpDrops.get()) {
                 val orb = OrbEntity(EntityRegistry.HP_ORB.get(), world, OrbVariant.HP)
                 orb.setOwner(killer)
-                orb.setPosition(killed.pos.x, killed.pos.y + (killed.height/2f).toDouble(), killed.pos.z)
+                orb.setPosition(killed.pos.x, killed.pos.y + (killed.height/1.5f).toDouble(), killed.pos.z)
                 val vel = ONSConfig.INSTANCE.orbSpawnVelocity.get()
-                val xDelta = (ONS.random().nextDouble() - 0.5) * vel
-                val zDelta = (ONS.random().nextDouble() - 0.5) * vel
-                orb.setVelocity(killed.velocity.x + xDelta, killed.velocity.y + vel, killed.velocity.z + zDelta)
+                val vel2 = vel * 1.5
+                val xDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                val zDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                orb.setVelocity(xDelta, vel, zDelta)
                 world.spawnEntity(orb)
+                bl = true
             }
-            if (ONSConfig.INSTANCE.willDropXp(killed) || ONSDebugConfig.INSTANCE.guaranteeXpDrops.get()) {
+            if (ONSConfig.INSTANCE.willDropXp(killed, killer, looting) || ONSDebugConfig.INSTANCE.guaranteeXpDrops.get()) {
                 val orb = OrbEntity(EntityRegistry.XP_ORB.get(), world, OrbVariant.XP)
                 orb.setOwner(killer)
                 orb.setPosition(killed.pos.x, killed.pos.y + (killed.height/2f).toDouble(), killed.pos.z)
                 val vel = ONSConfig.INSTANCE.orbSpawnVelocity.get()
-                val xDelta = (ONS.random().nextDouble() - 0.5) * vel
-                val zDelta = (ONS.random().nextDouble() - 0.5) * vel
-                orb.setVelocity(killed.velocity.x + xDelta, killed.velocity.y + vel, killed.velocity.z + zDelta)
+                val vel2 = vel * 1.5
+                val xDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                val zDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                orb.setVelocity(xDelta, vel, zDelta)
                 world.spawnEntity(orb)
+                bl = true
             }
-            if (ONSConfig.INSTANCE.willDropStatus(killed, killer) || ONSDebugConfig.INSTANCE.guaranteeStatusDrops.get()) {
+            if (ONSConfig.INSTANCE.willDropStatus(killed, killer, looting) || ONSDebugConfig.INSTANCE.guaranteeStatusDrops.get()) {
                 val orb = OrbEntity(EntityRegistry.STATUS_ORB.get(), world, OrbVariant.STATUS)
                 orb.setOwner(killer)
                 orb.setPosition(killed.pos.x, killed.pos.y + (killed.height/2f).toDouble(), killed.pos.z)
                 val vel = ONSConfig.INSTANCE.orbSpawnVelocity.get()
-                val xDelta = (ONS.random().nextDouble() - 0.5) * vel
-                val zDelta = (ONS.random().nextDouble() - 0.5) * vel
-                orb.setVelocity(killed.velocity.x + xDelta, killed.velocity.y + vel, killed.velocity.z + zDelta)
+                val vel2 = vel * 1.5
+                val xDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                val zDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                orb.setVelocity(xDelta, vel, zDelta)
                 world.spawnEntity(orb)
+                bl = true
             }
-            if (ONSConfig.INSTANCE.willDropBoss(killed, killer) || ONSDebugConfig.INSTANCE.guaranteeBossDrops.get()) {
+            if (ONSConfig.INSTANCE.willDropBoss(killed, killer, looting) || ONSDebugConfig.INSTANCE.guaranteeBossDrops.get()) {
                 val orb = OrbEntity(EntityRegistry.BOSS_ORB.get(), world, OrbVariant.BOSS)
                 orb.setOwner(killer)
                 orb.setPosition(killed.pos.x, killed.pos.y + (killed.height/2f).toDouble(), killed.pos.z)
                 val vel = ONSConfig.INSTANCE.orbSpawnVelocity.get()
-                val xDelta = (ONS.random().nextDouble() - 0.5) * vel
-                val zDelta = (ONS.random().nextDouble() - 0.5) * vel
-                orb.setVelocity(killed.velocity.x + xDelta, killed.velocity.y + vel, killed.velocity.z + zDelta)
+                val vel2 = vel * 1.5
+                val xDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                val zDelta = (ONS.random().nextDouble() - 0.5) * vel2
+                orb.setVelocity(xDelta, vel, zDelta)
                 world.spawnEntity(orb)
+                bl = true
+            }
+            if (bl) {
+                world.playSound(null, killed.x, killed.y, killed.z, SoundEvents.BLOCK_SNIFFER_EGG_PLOP, SoundCategory.PLAYERS, 0.5f, (killer.random.nextFloat() - killer.random.nextFloat()) * 1.4f + 2.0f)
             }
         }
     }

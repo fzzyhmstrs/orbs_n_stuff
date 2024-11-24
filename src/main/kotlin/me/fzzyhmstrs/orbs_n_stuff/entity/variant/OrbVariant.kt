@@ -75,7 +75,7 @@ class OrbVariant private constructor(val data: LootableItem.LootableData, val co
             }
         }
 
-        internal val bossData = LootableItem.LootableData.builder(ONS.identity("boss")).rolls(3).choices(1).build()
+        internal val bossData = LootableItem.LootableData.builder(ONS.identity("boss")).choices().rolls(3).choices(1).build()
 
         val HP = create(LootableItem.LootableData.builder(ONS.identity("hp")).onPickup().build(), DyeColor.RED, soundConsumer(SoundEvents.ENTITY_WARDEN_HEARTBEAT))
         val XP = create(LootableItem.LootableData.builder(ONS.identity("xp")).onPickup().build(), XpColor, soundConsumer(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP))
@@ -97,7 +97,7 @@ class OrbVariant private constructor(val data: LootableItem.LootableData, val co
             if (data.rollType == LootableItem.LootableData.RollType.RANDOM) {
                 LootablesApi.supplyLootRandomly(data.table, playerEntity, pos, data.key, data.rolls)
             } else {
-                LootablesApi.supplyLootWithChoices(data.table, playerEntity, pos, { _, _ -> }, { p, _ -> }, data.key, data.rolls)
+                LootablesApi.supplyLootWithChoices(data.table, playerEntity, pos, { _, _ -> }, { _, _ -> }, data.key, data.rolls, data.choices)
             }
         } else {
             onPickedUpForUse?.onPickup(playerEntity, pos, data) ?: false
